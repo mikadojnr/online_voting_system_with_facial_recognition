@@ -6,7 +6,7 @@ import FaceRecognition from "../components/FaceRecognition"
 import { FaUser, FaEnvelope, FaPhone, FaIdCard, FaCamera, FaEdit, FaSave, FaTimes, FaCheckCircle } from "react-icons/fa"
 
 const ProfilePage = () => {
-  const { user } = useAuth()
+  const { user, updateFace } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [showFaceUpdate, setShowFaceUpdate] = useState(false)
   const [formData, setFormData] = useState({
@@ -44,9 +44,10 @@ const ProfilePage = () => {
     setIsEditing(false)
   }
 
-  const handleFaceUpdateSuccess = () => {
+  const handleFaceUpdateSuccess = async (faceData) => {
+    setIsLoading(true)
+    await updateFace(faceData)
     setShowFaceUpdate(false)
-    // In real implementation, update face data
   }
 
   const handleFaceUpdateCancel = () => {
