@@ -16,7 +16,7 @@ import logging
 
 from models.user import User
 from models.face_data import FaceData
-from utils.cnn_face_recognition import CNNFaceRecognition
+from utils.cnn_face_recognition import face_recognition_system
 from extensions import db
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,6 @@ def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
-
 def decode_base64_image(base64_string):
     """Decode base64 image string to numpy array"""
     try:
@@ -77,7 +76,7 @@ def register_face():
         face_data = data['face_data']
         
         # Register face using CNN system
-        result = CNNFaceRecognition.register_face(face_data, current_user_id)
+        result = face_recognition_system.register_face(face_data, current_user_id)
         
         if result['success']:
             # Save face data to database
@@ -150,7 +149,7 @@ def verify_face():
             }), 400
         
         # Verify face using CNN system
-        result = CNNFaceRecognition.verify_face(face_data, current_user_id)
+        result = face_recognition_system.verify_face(face_data, current_user_id)
         
         return jsonify({
             'success': result['success'],
@@ -190,7 +189,7 @@ def update_face():
         face_data = data['face_data']
         
         # Register/update face using CNN system
-        result = CNNFaceRecognition.register_face(face_data, current_user_id)
+        result = face_recognition_system.register_face(face_data, current_user_id)
         
         if result['success']:
             # Update face data in database
@@ -260,7 +259,7 @@ def train_model():
             })
         
         # Train the model
-        history = CNNFaceRecognition.train_model(training_data)
+        history = face_recognition_system.train_model(training_data)
         
         if history is not None:
             return jsonify({
@@ -298,8 +297,8 @@ def get_model_info():
             }), 403
         
         # Get model information
-        model_loaded = CNNFaceRecognition.model is not None
-        encoder_loaded = CNNFaceRecognition.label_encoder is not None
+        model_loaded = face_recognition_system.model is not None
+        encoder_loaded = face_recognition_system.label_encoder is not None
         
         total_registered_faces = FaceData.query.count()
         
@@ -307,12 +306,12 @@ def get_model_info():
             'model_loaded': model_loaded,
             'encoder_loaded': encoder_loaded,
             'total_registered_faces': total_registered_faces,
-            'confidence_threshold': CNNFaceRecognition.confidence_threshold,
-            'image_size': CNNFaceRecognition.img_size
+            'confidence_threshold': face_recognition_system.confidence_threshold,
+            'image_size': face_recognition_system.img_size
         }
         
         if model_loaded and encoder_loaded:
-            model_info['num_classes'] = len(CNNFaceRecognition.label_encoder.classes_)
+            model_info['num_classes'] = len(face_recognition_system.label_encoder.classes_)
         
         return jsonify({
             'success': True,
