@@ -114,8 +114,8 @@ fuo-voting-system/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-repo/fuo-voting-system.git
-cd fuo-voting-system
+git clone https://github.com/mikadojnr/online_voting_system_with_facial_recognition.git
+cd online_voting_system_with_facial_recognition
 ```
 
 2. **Setup Backend**
