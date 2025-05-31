@@ -52,68 +52,31 @@ export const AuthProvider = ({ children }) => {
   }
 
   const login = async (credentials) => {
-    try {
-      setLoading(true)
+  try {
+    setLoading(true);
 
-      // Try API first, fallback to mock data
-      try {
-        const response = await authAPI.login(credentials)
+    const response = await authAPI.login(credentials);
 
-        if (response.data.success) {
-          const { user, token } = response.data
-          localStorage.setItem("token", token)
-          localStorage.setItem("user", JSON.stringify(user))
-          setUser(user)
-          toast.success("Login successful!")
-          return { success: true }
-        }
-      } catch (apiError) {
-        console.log("API not available, using mock data")
-
-        // Mock authentication for development
-        const mockUsers = [
-          {
-            id: 1,
-            name: "John Doe",
-            email: "john.doe@student.fuotuoke.edu.ng",
-            studentId: "FUO/2021/CS/001",
-            phone: "+234 801 234 5678",
-            isAdmin: false,
-            faceRegistered: true,
-            votedElections: [],
-          },
-          {
-            id: 2,
-            name: "Admin User",
-            email: "admin@fuotuoke.edu.ng",
-            studentId: "ADMIN001",
-            phone: "+234 803 123 4567",
-            isAdmin: true,
-            faceRegistered: true,
-            votedElections: [],
-          },
-        ]
-
-        const user = mockUsers.find((u) => u.email === credentials.email && credentials.password === "password123")
-
-        if (user) {
-          localStorage.setItem("user", JSON.stringify(user))
-          setUser(user)
-          toast.success("Login successful!")
-          return { success: true }
-        } else {
-          toast.error("Invalid credentials")
-          return { success: false, error: "Invalid credentials" }
-        }
-      }
-    } catch (error) {
-      const message = error.response?.data?.error || error.message || "Login failed"
-      toast.error(message)
-      return { success: false, error: message }
-    } finally {
-      setLoading(false)
+    if (response.data.success) {
+      const { user, token } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+      toast.success("Login successful!");
+      return { success: true };
+    } else {
+      toast.error("Login failed");
+      return { success: false, error: "Login failed" };
     }
+  } catch (error) {
+    const message = error.response?.data?.error || error.message || "Login failed";
+    toast.error(message);
+    return { success: false, error: message };
+  } finally {
+    setLoading(false);
   }
+};
+
 
   const register = async (userData) => {
     try {
@@ -194,6 +157,29 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Face verification error:", error)
       return { success: false, error: error.message }
+    }
+  }
+
+  const updateFace = async (faceData) => {
+    try {
+      //  Call your update face API with base64 face data
+      const response = await faceAPI.updateFace(faceData)
+      if (response.data.success) {
+        const updatedUser = {
+          ...user,
+          faceRegistered: true,
+        }
+
+        localStorage.setItem("user", JSON.stringify(updatedUser))
+        setUser(updatedUser)
+        toast.success("Face data updated sucessfully")
+      } else {
+        toast.error("Failed to update face data")
+        console.log("Failed to update face data: ", response.data.error)
+      }
+    } catch (error) {
+      console.error("Face update error: ", error)
+      toast.success("Error updating face data")
     }
   }
 
@@ -281,6 +267,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     verifyFace,
+    updateFace,
     castVote,
     hasVotedForOffice,
     hasVotedInElection,
