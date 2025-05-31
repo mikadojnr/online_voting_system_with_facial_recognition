@@ -350,7 +350,7 @@ def train_cnn_model():
         # Train model
         current_app.logger.info(f"Starting CNN model training with {epochs} epochs")
         
-        history = CNNFaceRecognition.train_model(
+        history = face_recognition_system.train_model(
             dataset_path=dataset_path,
             epochs=epochs,
             batch_size=batch_size
@@ -371,7 +371,7 @@ def train_cnn_model():
             'final_accuracy': final_accuracy,
             'final_val_accuracy': final_val_accuracy,
             'epochs_completed': len(history.history['accuracy']),
-            'model_path': CNNFaceRecognition.model_path
+            'model_path': face_recognition_system.model_path
         })
         
     except Exception as e:
@@ -392,8 +392,8 @@ def get_model_status():
             return jsonify({'success': False, 'error': 'Admin access required'}), 403
         
         # Check if model exists
-        model_exists = os.path.exists(CNNFaceRecognition.model_path)
-        model_loaded = CNNFaceRecognition.model is not None
+        model_exists = os.path.exists(face_recognition_system.model_path)
+        model_loaded = face_recognition_system.model is not None
         
         # Get face data statistics
         total_face_data = FaceData.query.count()
@@ -406,8 +406,8 @@ def get_model_status():
         status = {
             'model_exists': model_exists,
             'model_loaded': model_loaded,
-            'model_path': CNNFaceRecognition.model_path,
-            'confidence_threshold': CNNFaceRecognition.confidence_threshold,
+            'model_path': face_recognition_system.model_path,
+            'confidence_threshold': face_recognition_system.confidence_threshold,
             'statistics': {
                 'total_face_data': total_face_data,
                 'verified_faces': verified_faces,
