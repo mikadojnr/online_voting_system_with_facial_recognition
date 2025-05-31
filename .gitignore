@@ -1,0 +1,44 @@
+# === Node/React ===
+node_modules/
+frontend/build/
+frontend/.env
+frontend/.dist/
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+backend/.env
+backend/voting_venv/
+backend/instance
+
+# === General ===
+.env
+*.log
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.bak
+
+# === Virtual environments (if at root level) ===
+env/
+venv/
+
+# === Coverage and testing ===
+htmlcov/
+.tox/
+.coverage
+coverage.xml
+.pytest_cache/
+
+
